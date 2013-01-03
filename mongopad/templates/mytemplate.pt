@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mongopad</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/static/css/codemirror.css" rel="stylesheet" media="screen">
+    <link href="/static/css/codemirror/theme/monokai.css" rel="stylesheet" media="screen">
+    <style>
+
+      .CodeMirror {
+        height: auto;
+        min-height: 70px;
+      }
+      .CodeMirror-scroll {
+        overflow-y: hidden;
+        overflow-x: auto;
+      }
+
+      .execute-markers {width: .8em;}
+      .execute-marker { color: #a6e22e; }
+
+    </style>
+  </head>
+  <body>
+
+    <div class="navbar navbar-static-top">
+      <div class="navbar-inner">
+        <a class="brand" href="#">Mongopad</a>
+        <ul class="nav">
+          <li><a href="#">How to</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Source</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container-fluid">
+
+      <div class="row-fluid">
+        <div class="span2">
+
+        <ul class="nav nav-list">
+          <li class="nav-header">Unsaved workbooks</li>
+          <li class="active"><a href="#">Untitled Query</a></li>
+          <li class="nav-header">Saved workbooks</li>
+          <li><a href="#">Users by Age</a></li>
+          <li><a href="#">Users by city</a></li>
+        </ul>
+
+
+        </div>
+        <div class="span10">
+          <form>
+            <textarea id="query-editor" name="query"></textarea>
+          </form>
+
+          <!--Body content-->
+        </div>
+      </div>
+    </div>
+
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/codemirror.js"></script>
+    <script src="/static/js/codemirror/mode/javascript.js"></script>
+    <script src="/static/js/codemirror/util/searchcursor.js"></script>
+
+    <script>
+      var editor;
+      $(function(){
+
+        editor = CodeMirror.fromTextArea($('#query-editor').get(0), {
+          mode: "javascript",
+          theme: "monokai",
+          lineNumbers: true,
+          gutters: ["CodeMirror-linenumbers", "execute-markers"]
+        });
+
+        editor.on("change", function(cm, n) {
+          cm.clearGutter('execute-markers');
+          var search = cm.getSearchCursor(';', 0, true);
+          
+          while (search.find()) {
+            if (search.atOccurrence) {
+              cm.setGutterMarker(search.pos.to.line, "execute-markers", makeMarker());
+            }
+          }
+        });
+
+        function makeMarker() {
+          var marker = document.createElement("div");
+          marker.innerHTML = "»";
+          marker.className = "execute-marker";
+          return marker;
+        }
+
+      });
+    </script> 
+
+  </body>
+</html>
